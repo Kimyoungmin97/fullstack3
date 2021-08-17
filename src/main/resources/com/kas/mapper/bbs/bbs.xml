@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kas.fullstack.bbs.dao.BBSDao">
+
+	<insert id="write" parameterType="article" useGeneratedKeys="true"
+		keyProperty="articleNum" keyColumn="articleNum">
+		insert into bbs values(bbs_seq.nextval,#{id},#{title},#{content},sysdate)
+	</insert>
+	
+	<select id="list" resultType="article">
+		select articleNum, id, title 
+		from bbs
+		order by articleNum desc
+	</select>
+	
+	<select id="content" parameterType="int" resultType="article">
+		select * from bbs where articleNum=#{articleNum}
+	</select>
+	
+	<select id="login" parameterType="String" resultType="String">
+		select pass from login where id=#{id}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		delete from bbs where articleNum=#{articleNum}
+	</delete>
+	
+	<select id="getUpdateArticle" parameterType="String" resultType="article">
+		select articleNum,title,content
+		from bbs
+		where articleNum=#{articleNum}
+	</select>
+	
+	<update id="updateArticle" parameterType="article">
+		update bbs set title=#{title}, content=#{content}
+		where articleNum=#{articleNum}
+	</update>
+	
+	<insert id="insertFile" parameterType="fileDto">
+		insert into filelist values(file_seq.nextval,#{originalFileName},#{savedFileName},#{articleNum})
+	</insert>
+	
+	<select id="getFiles" parameterType="int" resultType="fileDto">
+		select fileNum,originalFileName,savedFileName from filelist where articleNum=#{articleNum}
+	</select>
+	
+	<select id="commentCount" parameterType="int" resultType="int">
+		select count(*) from comments where articleNum = #{articleNum}
+	</select>
+</mapper>

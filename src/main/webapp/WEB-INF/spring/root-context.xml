@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+<!-- 	@Transactional 사용 가능하게 해줌 -->
+	<tx:annotation-driven/>
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+<!-- 	1.접속할 db에 대한 정보 (주소, 드라이버, 아이디, 패스워드...)	 -->
+<!-- 	2.Mybatis에서 제공해주는 클래스에게 1번의 정보를 DI해줘야 함 -->
+<!-- 	3.db 접속 정보를 가지는 클래스(빈)은 스프링이 제공해주는 클래스(커넥션 풀을 지원 안해줌)도 있고 Tomcat이 제공해주는 클래스도 있음 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>		
+		<property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:XE"/>
+		<property name="username" value="human"/>
+		<property name="password" value="1234"/>
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:/mybatisConfig/mybatisConfig.xml" />
+		<property name="mapperLocations" value="classpath:/com/kas/mapper/**/*.xml" />	<!-- 쿼리문이 적혀있는 파일 -->	
+	</bean>
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean name="saveDir" class="java.lang.String">
+		<constructor-arg value="C:\upload\" />
+	</bean>
+
+	<mybatis-spring:scan base-package="com.kas.fullstack.comment.dao"/>
+	
+</beans>

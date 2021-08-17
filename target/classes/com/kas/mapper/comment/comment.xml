@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.kas.fullstack.comment.dao.CommentDao">
+	<insert id="commentWrite" parameterType="comment">
+		insert into comments values(comment_seq.nextval,#{id},#{commentContent},sysdate,#{articleNum})
+	</insert>
+	
+	<select id="commentRead" parameterType="java.util.HashMap" resultType="comment">
+		select commentNum, id, commentContent, commentDate 
+		from (select rownum rm,tt.*
+        		from (select *
+                	from comments
+                	order by commentNum desc) tt
+                    where articleNum = #{articleNum})
+        where rm between #{firstNum} and #{commentRow}
+	</select>
+	
+</mapper>
